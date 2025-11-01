@@ -7,6 +7,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,6 +21,7 @@ import java.util.Date;
  * JWT 토큰 생성 및 검증을 처리하는 클래스
  * JWT 기반 인증을 위한 토큰 생성, 검증, 파싱 등의 기능을 제공합니다.
  */
+@Slf4j
 @Component
 public class JwtTokenProvider {
     
@@ -102,6 +104,9 @@ public class JwtTokenProvider {
      */
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
+        log.debug("======================================= bearerToken");
+        log.debug("bearerToken request {}", bearerToken);
+        log.debug("===================================================");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }

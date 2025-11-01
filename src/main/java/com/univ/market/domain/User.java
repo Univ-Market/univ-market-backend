@@ -49,6 +49,7 @@ public class User {
     /**
      * 대학교 인증 여부
      */
+    @Column(name = "is_verified")
     private boolean isVerified;
     
     /**

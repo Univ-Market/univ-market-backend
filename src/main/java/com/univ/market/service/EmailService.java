@@ -22,6 +22,9 @@ public class EmailService {
     
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
+
+    // 공통 발신자 주소 (application.yml 의 spring.mail.username 값과 동일하게 맞춰주세요)
+    private static final String FROM_ADDRESS = "nhs41581@gmail.com";
     
     /**
      * 대학교 인증 이메일을 전송하는 메서드
@@ -46,6 +49,7 @@ public class EmailService {
             helper.setTo(to);
             helper.setSubject("[대학마켓] 대학교 인증 코드");
             helper.setText(htmlContent, true);
+            helper.setFrom(FROM_ADDRESS); // 발신자 지정
             
             // 이메일 전송
             mailSender.send(message);
@@ -82,6 +86,7 @@ public class EmailService {
             helper.setTo(to);
             helper.setSubject("[대학마켓] 새로운 상품이 등록되었습니다: " + product.getTitle());
             helper.setText(htmlContent, true);
+            helper.setFrom(FROM_ADDRESS);
             
             // 이메일 전송
             mailSender.send(message);
@@ -115,6 +120,7 @@ public class EmailService {
             helper.setTo(to);
             helper.setSubject("[대학마켓] 상품 예약 알림: " + product.getTitle());
             helper.setText(htmlContent, true);
+            helper.setFrom(FROM_ADDRESS);
             
             // 이메일 전송
             mailSender.send(message);
@@ -146,6 +152,7 @@ public class EmailService {
             sellerHelper.setTo(product.getSeller().getEmail());
             sellerHelper.setSubject("[대학마켓] 거래 완료 알림: " + product.getTitle());
             sellerHelper.setText(sellerHtmlContent, true);
+            sellerHelper.setFrom(FROM_ADDRESS);
             
             mailSender.send(sellerMessage);
             
@@ -163,6 +170,7 @@ public class EmailService {
             buyerHelper.setTo(product.getBuyer().getEmail());
             buyerHelper.setSubject("[대학마켓] 구매 완료 알림: " + product.getTitle());
             buyerHelper.setText(buyerHtmlContent, true);
+            buyerHelper.setFrom(FROM_ADDRESS);
             
             mailSender.send(buyerMessage);
         } catch (MessagingException e) {

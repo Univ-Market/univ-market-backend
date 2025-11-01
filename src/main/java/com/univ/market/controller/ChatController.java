@@ -21,6 +21,7 @@ import java.util.List;
  * WebSocket을 통한 실시간 채팅과 REST API를 통한 채팅방 관리 기능을 처리합니다.
  */
 @RestController
+@CrossOrigin(origins = "http://localhost:3000") //임시추가
 @RequiredArgsConstructor
 public class ChatController {
     

@@ -1,5 +1,6 @@
 package com.univ.market.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.univ.market.domain.User;
 import lombok.Builder;
 import lombok.Data;
@@ -39,6 +40,7 @@ public class UserResponse {
     /**
      * 대학교 인증 여부
      */
+    @JsonProperty("isVerified")
     private boolean isVerified;
     
     /**
