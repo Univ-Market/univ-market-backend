@@ -1,11 +1,18 @@
 package com.univ.market.controller;
 
 import com.univ.market.dto.request.UnivVerificationRequest;
+import com.univ.market.dto.response.ProductResponse;
 import com.univ.market.dto.response.UserResponse;
 import com.univ.market.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+
+// 2025/10/14 추가
+import com.univ.market.service.ProductService;
+import com.univ.market.dto.response.ProductResponse;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     
     private final UserService userService;
+    private final ProductService productService;
     
     /**
      * 현재 로그인한 사용자 정보 조회 API
@@ -73,4 +81,19 @@ public class UserController {
         boolean isVerified = userService.verifyUnivEmail(request);
         return ResponseEntity.ok(isVerified);
     }
+
+     /**
+     * 2025/10/14 추가
+     * 현재 로그인한 사용자가 등록한 상품 목록 조회 API (마이페이지에서 사용)
+     *
+     * @param userId 현재 인증된 사용자 ID
+     * @return 상품 목록
+     */
+    @GetMapping("/me/products") // 👈 엔드포인트를 추가합니다.
+    public ResponseEntity<List<ProductResponse>> getMyProducts(@AuthenticationPrincipal Long userId) {
+        List<ProductResponse> response = productService.getProductsBySeller(userId);
+        return ResponseEntity.ok(response);
+    }
+    
+
 }
