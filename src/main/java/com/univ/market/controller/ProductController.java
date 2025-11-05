@@ -108,14 +108,30 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
     
-    /**
-     * 상품 삭제 API
-     * 
-     * @param id 상품 ID
-     * @param userId 현재 인증된 사용자 ID
-     * @return 응답 없음 (204 No Content)
-     */
-    @DeleteMapping("/{id}")
+        /**
+         * 상품 수정 API
+         *
+         * @param id 상품 ID
+         * @param request 상품 수정 요청 데이터
+         * @param userId 현재 인증된 사용자 ID
+         * @return 수정된 상품 정보
+         */
+        @PutMapping("/{id}")
+        public ResponseEntity<ProductResponse> updateProduct(
+                @PathVariable Long id,
+                @RequestBody ProductRequest request,
+                @AuthenticationPrincipal Long userId) {
+            ProductResponse response = productService.updateProduct(id, request, userId);
+            return ResponseEntity.ok(response);
+        }
+    
+        /**
+         * 상품 삭제 API
+         *
+         * @param id 상품 ID
+         * @param userId 현재 인증된 사용자 ID
+         * @return 응답 없음 (204 No Content)
+         */    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(
             @PathVariable Long id,
             @AuthenticationPrincipal Long userId) {

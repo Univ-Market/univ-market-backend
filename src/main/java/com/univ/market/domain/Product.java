@@ -125,4 +125,11 @@ public class Product {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    public void update(String title, String description, int price, Category category) {
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.category = category;
+    }
 }

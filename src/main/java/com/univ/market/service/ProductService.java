@@ -197,16 +197,45 @@ public class ProductService {
         return ProductResponse.fromEntity(updatedProduct);
     }
     
-    /**
-     * 상품을 삭제하는 메서드
-     * 판매자 본인만 삭제 가능합니다.
-     * 
-     * @param productId 상품 ID
-     * @param userId 요청자 ID
-     * @throws IllegalArgumentException 존재하지 않는 상품인 경우
-     * @throws IllegalStateException 판매자가 아닌 사용자가 삭제 시도하는 경우
-     */
-    @Transactional
+        @Transactional
+        public ProductResponse updateProduct(Long productId, ProductRequest request, Long userId) {
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+    
+            if (!product.getSeller().getId().equals(userId)) {
+                throw new IllegalStateException("본인이 등록한 상품만 수정할 수 있습니다.");
+            }
+    
+            Category category = categoryRepository.findById(request.getCategoryId())
+                    .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
+    
+            product.update(request.getTitle(), request.getDescription(), request.getPrice(), category);
+    
+            // 이미지 업데이트 로직 (기존 이미지 삭제 후 새 이미지 추가)
+            if (request.getImageUrls() != null) {
+                product.getImages().clear(); // 기존 이미지 삭제
+                List<Image> newImages = request.getImageUrls().stream()
+                        .map(url -> Image.builder()
+                                .imageUrl(url)
+                                .product(product)
+                                .build())
+                        .collect(Collectors.toList());
+                product.getImages().addAll(newImages);
+            }
+    
+            Product updatedProduct = productRepository.save(product);
+            return ProductResponse.fromEntity(updatedProduct);
+        }
+    
+        /**
+         * 상품을 삭제하는 메서드
+         * 판매자 본인만 삭제 가능합니다.
+         *
+         * @param productId 상품 ID
+         * @param userId 요청자 ID
+         * @throws IllegalArgumentException 존재하지 않는 상품인 경우
+         * @throws IllegalStateException 판매자가 아닌 사용자가 삭제 시도하는 경우
+         */    @Transactional
     public void deleteProduct(Long productId, Long userId) {
         // 상품 정보 조회
         Product product = productRepository.findById(productId)
