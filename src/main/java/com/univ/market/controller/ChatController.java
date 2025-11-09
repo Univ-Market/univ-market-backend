@@ -70,6 +70,22 @@ public class ChatController {
         List<ChatRoomResponse> chatRooms = chatService.getMyChatRooms(userId);
         return ResponseEntity.ok(chatRooms);
     }
+
+    /**
+     * 특정 채팅방 정보 조회 API
+     *
+     * @param roomId 채팅방 ID
+     * @param userId 현재 인증된 사용자 ID
+     * @return 채팅방 상세 정보
+     */
+    @GetMapping("/api/chat/rooms/{roomId}")
+    public ResponseEntity<ChatRoomResponse> getChatRoomById(
+            @PathVariable Long roomId,
+            @AuthenticationPrincipal Long userId) {
+        ChatRoomResponse chatRoom = chatService.getChatRoomById(roomId, userId);
+        return ResponseEntity.ok(chatRoom);
+    }
+
     
     /**
      * 채팅방 메시지 목록 조회 API
