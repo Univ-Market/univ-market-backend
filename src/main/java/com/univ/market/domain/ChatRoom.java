@@ -47,6 +47,7 @@ public class ChatRoom {
      * 채팅 메시지 목록 (일대다 관계)
      */
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<ChatMessage> messages = new ArrayList<>();
     
     /**
