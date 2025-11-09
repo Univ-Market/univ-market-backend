@@ -50,11 +50,7 @@ public class JwtTokenProvider {
      */
     @PostConstruct
     protected void init() {
-        if (secretKey.length() < 32) { // 256비트보다 작은 키 길이
-            this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-        } else {
-            this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
-        }
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
     
     /**
