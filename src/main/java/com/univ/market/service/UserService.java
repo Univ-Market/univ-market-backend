@@ -26,33 +26,34 @@ public class UserService {
     private final EmailService emailService;
     
     /**
-     * 카카오 로그인 처리 메서드
+     * OAuth2 로그인 처리 메서드
      * 기존 사용자면 정보를 반환하고, 새 사용자면 등록합니다.
-     * 
-     * @param oauthId 카카오에서 제공하는 고유 ID
-     * @param email 사용자 이메일
-     * @param nickname 사용자 닉네임
+     *
+     * @param provider    OAuth2 제공자 (e.g., "kakao", "google")
+     * @param oauthId     OAuth2 제공자가 부여한 고유 ID
+     * @param email       사용자 이메일
+     * @param nickname    사용자 닉네임
      * @return 사용자 정보
      */
     @Transactional
-    public User processKakaoLogin(String oauthId, String email, String nickname) {
+    public User processOAuthLogin(String provider, String oauthId, String email, String nickname) {
         // 기존 사용자 확인
-        User user = userRepository.findByOauthProviderAndOauthId("kakao", oauthId)
+        User user = userRepository.findByOauthProviderAndOauthId(provider, oauthId)
                 .orElse(null);
-        
+
         if (user == null) {
             // 새 사용자 등록
             user = User.builder()
                     .email(email)
                     .nickname(nickname)
-                    .oauthProvider("kakao")
+                    .oauthProvider(provider)
                     .oauthId(oauthId)
                     .isVerified(false)
                     .build();
-            
+
             user = userRepository.save(user);
         }
-        
+
         return user;
     }
     

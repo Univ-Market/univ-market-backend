@@ -61,10 +61,14 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             email = (String) kakaoAccount.get("email");
             Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
             nickname = (String) profile.get("nickname");
+        } else if ("google".equals(providerType)) {
+            oauthId = (String) attributes.get("sub");
+            email = (String) attributes.get("email");
+            nickname = (String) attributes.get("name");
         }
-        
+
         // 사용자 정보 저장 및 JWT 토큰 생성
-        User user = userService.processKakaoLogin(oauthId, email, nickname);
+        User user = userService.processOAuthLogin(providerType, oauthId, email, nickname);
         String jwtToken = jwtTokenProvider.createToken(user.getId());
         
         // 프론트엔드 콜백 URL로 토큰과 함께 리다이렉트
