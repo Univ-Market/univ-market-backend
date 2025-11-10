@@ -64,7 +64,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             email = (String) attributes.get("email");
             nickname = (String) attributes.get("name");
         }
-        
+
         // 사용자 정보 저장 및 JWT 토큰 생성
         User user = userService.processOAuthLogin(oauthId, email, nickname, providerType);
         String jwtToken = jwtTokenProvider.createToken(user.getId());
