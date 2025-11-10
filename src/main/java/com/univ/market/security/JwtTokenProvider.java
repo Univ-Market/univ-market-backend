@@ -72,6 +72,13 @@ public class JwtTokenProvider {
                 .compact();
     }
     
+    public String createToken(Authentication authentication) {
+        // 인증 정보에서 사용자 ID를 가져와 Long으로 변환
+        Long userId = Long.parseLong(authentication.getName());
+        // 기존의 Long을 받는 createToken 메소드를 호출하여 토큰 생성
+        return createToken(userId);
+    }
+
     /**
      * JWT 토큰에서 인증 정보를 추출하는 메서드
      * 

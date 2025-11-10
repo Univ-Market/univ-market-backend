@@ -20,40 +20,43 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    
     private final UserRepository userRepository;
     private final UnivVerificationRepository univVerificationRepository;
     private final EmailService emailService;
     
     /**
-     * 카카오 로그인 처리 메서드
+     * 소셜 로그인 처리 메서드
      * 기존 사용자면 정보를 반환하고, 새 사용자면 등록합니다.
-     * 
-     * @param oauthId 카카오에서 제공하는 고유 ID
-     * @param email 사용자 이메일
-     * @param nickname 사용자 닉네임
+     *
+     * @param oauthId      소셜 미디어에서 제공하는 고유 ID
+     * @param email        사용자 이메일
+     * @param nickname     사용자 닉네임
+     * @param providerType 소셜 미디어 제공자 (예: "kakao", "google")
      * @return 사용자 정보
      */
     @Transactional
-    public User processKakaoLogin(String oauthId, String email, String nickname) {
+    public User processOAuthLogin(String oauthId, String email, String nickname, String providerType) {
         // 기존 사용자 확인
-        User user = userRepository.findByOauthProviderAndOauthId("kakao", oauthId)
-                .orElse(null);
-        
-        if (user == null) {
-            // 새 사용자 등록
-            user = User.builder()
-                    .email(email)
-                    .nickname(nickname)
-                    .oauthProvider("kakao")
-                    .oauthId(oauthId)
-                    .isVerified(false)
-                    .build();
-            
-            user = userRepository.save(user);
-        }
-        
-        return user;
+        return userRepository.findByOauthProviderAndOauthId(providerType, oauthId)
+                .map(user -> {
+                    // 기존 사용자의 닉네임이 소셜 프로필과 다르면 업데이트 (선택적)
+                    if (nickname != null && !nickname.equals(user.getNickname())) {
+                        user.setNickname(nickname);
+                        userRepository.save(user);
+                    }
+                    return user;
+                })
+                .orElseGet(() -> {
+                    // 새 사용자 등록
+                    User newUser = User.builder()
+                            .email(email)
+                            .nickname(nickname)
+                            .oauthProvider(providerType)
+                            .oauthId(oauthId)
+                            .isVerified(false)
+                            .build();
+                    return userRepository.save(newUser);
+                });
     }
     
     /**

@@ -6,7 +6,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -21,7 +20,6 @@ import java.util.Map;
  * OAuth2 인증 성공 핸들러
  * OAuth2 로그인 성공 후 처리를 담당합니다.
  */
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -61,10 +59,14 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             email = (String) kakaoAccount.get("email");
             Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
             nickname = (String) profile.get("nickname");
+        } else if ("google".equals(providerType)) {
+            oauthId = (String) attributes.get("sub");
+            email = (String) attributes.get("email");
+            nickname = (String) attributes.get("name");
         }
         
         // 사용자 정보 저장 및 JWT 토큰 생성
-        User user = userService.processKakaoLogin(oauthId, email, nickname);
+        User user = userService.processOAuthLogin(oauthId, email, nickname, providerType);
         String jwtToken = jwtTokenProvider.createToken(user.getId());
         
         // 프론트엔드 콜백 URL로 토큰과 함께 리다이렉트
