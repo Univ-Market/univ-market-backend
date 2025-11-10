@@ -128,6 +128,7 @@ public class ProductService {
     public ProductResponse getProductById(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+        
         return ProductResponse.fromEntity(product);
     }
     
